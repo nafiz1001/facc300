@@ -1,21 +1,20 @@
 (ns facc.frontend.app
   (:require [reagent.dom :as rdom]))
 
-(comment 
-  (defn tvm-table []
-    (let [reciprocal (fn [f] #(/ 1 (f %1 %2)))
-          compound-amount (fn [i, n] (js/Math.pow (+ 1 i) n))
-          present-value (reciprocal compound-amount)
-          series-compound-amount (fn [i, n] (/ (- (compound-amount i n) 1) i))
-          sinking-fund (reciprocal series-compound-amount)
-          series-present-value (fn [i, n] (if (neg-int? n)
-                                            (/ 1 i)
-                                            (/ (- 1 (present-value i n)) i)))
-          capital-recovery (reciprocal series-present-value)
-          uniform-gradient-series (fn [i, n] (- (/ 1 i) (/ n (- (compound-amount i n) 1))))
-          ])
-  )
-)
+(comment
+  (def pow js/Math.pow)
+  
+  (defn reciprocal [f] #(/ 1 (f %1 %2)))
+  
+  (defn present-value [i n] (pow (/ 1 (+ 1 i)) n))
+  
+  (defn geometric-series-present-value [i g n]
+    (cond
+      (neg-int? n) (/ 1 (- i g))
+      (= i g) (/ n (+ i g))
+      :else (/ (- 1 (pow (/ (+ 1 g) (+ 1 i)) n)) (- i g))))
+  
+  (rdom/render [:div "hello space"] (js/document.getElementById "app")))
 
 (defn init []
   (println "Hello World")
